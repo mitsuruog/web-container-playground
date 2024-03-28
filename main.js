@@ -68,13 +68,17 @@ window.addEventListener("load", async () => {
     installProcess.output.pipeTo(
       new WritableStream({
         write(data) {
-          console.log(data);
           const div = document.createElement("div");
           div.textContent = data;
           logEl.append(div);
         },
       })
     );
+
+    const installExitCode = await installProcess.exit;
+    if (installExitCode !== 0) {
+      throw new Error("Unable to run npm install");
+    }
 
     await webcontainerInstance.spawn("npm", ["run", "dev"]);
   });
