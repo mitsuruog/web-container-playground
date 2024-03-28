@@ -1,4 +1,5 @@
 import { WebContainer } from "@webcontainer/api";
+import { sample } from "./sample";
 
 import "./style.css";
 
@@ -6,9 +7,18 @@ import "./style.css";
 let webcontainerInstance;
 
 document.querySelector("body").innerHTML = `
-<div>
-  Paste <a href="https://webcontainers.io/api#filesystemtree" target="_blank" rel="noopener noreferrer">FileSystemTree</a> JSON object here and click
-  <button id="run">Boot</button>
+<div class="header">
+  <div>
+    Paste <a href="https://webcontainers.io/api#filesystemtree" target="_blank" rel="noopener noreferrer">FileSystemTree</a> JSON object here and click
+    <button id="run">Boot</button>
+  </div>
+  <div>
+    Sample:
+    <select>
+    <option value=""></option>
+    <option value="viteReactJs">Vite React + JavaScript</option>
+    </select>
+  </div>
 </div>
 <div class="container">
   <div class="editor">
@@ -32,6 +42,9 @@ window.addEventListener("load", async () => {
 
   /** @type {HTMLButtonElement | null} */
   const logEl = document.querySelector("#log");
+
+  /** @type {HTMLSelectElement | null} */
+  const selectEl = document.querySelector("select");
 
   // Call only once
   webcontainerInstance = await WebContainer.boot();
@@ -64,5 +77,11 @@ window.addEventListener("load", async () => {
     );
 
     await webcontainerInstance.spawn("npm", ["run", "dev"]);
+  });
+
+  selectEl.addEventListener("change", (event) => {
+    const value = event.target.value;
+    const files = sample[value];
+    textareaEl.value = files ? JSON.stringify(files, null, 2) : "";
   });
 });
